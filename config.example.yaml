@@ -1,0 +1,74 @@
+# ============================================================================
+# 跟单机器人配置。复制为 config.yaml 后修改：  cp config.example.yaml config.yaml
+# 密钥（Telegram / 交易所 API）放在 .env，不要写在这里。
+# ============================================================================
+
+# true = 模拟模式：解析信号、按实时价格模拟成交/止盈/止损并统计各频道战绩，但不真实下单。
+# 强烈建议先跑 1-2 周模拟，用 /status 看各频道真实胜率后再改成 false。
+dry_run: true
+
+exchange:
+  id: binance          # binance / okx / bybit / bitget / gate （ccxt 交易所 id，USDT 永续合约）
+  testnet: false       # true = 使用交易所测试网（需测试网 API key）
+  margin_mode: isolated  # isolated 逐仓（推荐）/ cross 全仓
+
+# 通知发到哪里："me" = 你自己的 Telegram「收藏夹 / Saved Messages」
+notify_chat: me
+
+# 自动加入频道（Telegram 只推送已加入频道的新消息）
+auto_join: true
+
+channels:
+  - name: IvanCryptotalk
+    enabled: true
+  - name: zxcccckhf
+    enabled: true
+  - name: chun77chun
+    enabled: true
+  - name: yuyanjia66
+    enabled: true
+  # 每个频道可单独覆盖：margin_usdt / risk_usdt / max_leverage / require_stop_loss
+  # - name: xxx
+  #   margin_usdt: 5
+  #   max_leverage: 5
+
+risk:
+  # 仓位计算方式：
+  #   fixed_margin: 每单固定保证金 margin_usdt，仓位 = 保证金 × 杠杆
+  #   fixed_risk:   每单打到止损固定亏 risk_usdt，仓位 = risk_usdt / 止损距离（更科学）
+  sizing: fixed_margin
+  margin_usdt: 10
+  risk_usdt: 3
+  max_notional_usdt: 300        # 单笔仓位价值上限（USDT）
+
+  default_leverage: 5           # 信号没写杠杆时使用
+  max_leverage: 10              # 信号写 100x 也只会用这个上限
+  max_loss_at_stop_pct: 60      # 自动降杠杆，保证打到止损前不会被强平（止损亏损 ≤ 保证金的 60%）
+
+  require_stop_loss: true       # 信号没有止损就不跟（强烈建议保持 true）
+  default_stop_loss_pct: 3      # 仅当 require_stop_loss=false 时，默认止损 3%
+  default_tp_rr: 2              # 信号没有止盈时，按 2 倍止损距离设止盈（0 = 不设）
+
+  max_open_positions: 3         # 同时最多持仓数
+  max_trades_per_day: 10        # 每天最多开仓次数
+  daily_loss_limit_pct: 10      # 账户当日亏损超过 10% 停止开新仓（仅实盘）
+
+  max_entry_deviation_pct: 1.5  # 市价偏离进场区间超过 1.5% 不追
+  use_limit_orders: true        # 偏离时改挂限价单（在进场区间边缘）
+  limit_order_ttl_min: 60       # 限价单 60 分钟未成交自动撤单
+
+  signal_max_age_sec: 120       # 超过 120 秒的旧消息不跟（防止重连后补发的旧信号）
+  dedup_hours: 12               # 同一信号重复转发，12 小时内只跟一次
+
+  tp_split: [0.5, 0.3, 0.2]     # 多个止盈位的平仓比例
+  move_sl_to_entry_after_tp1: true  # 第一止盈成交后止损移到开仓价（保本）
+  follow_updates: true          # 跟随频道后续指令：提損/移损、減倉 N%、全部平倉（仅限该频道开的仓）
+
+  symbol_whitelist: []          # 非空时只交易这些币，例如 [BTC, ETH, SOL]
+  symbol_blacklist: []          # 不交易的币
+
+# 可选：用 Claude 解析规则解析器识别不了的消息（需要 .env 里的 ANTHROPIC_API_KEY）
+llm:
+  enabled: false
+  mode: fallback                # fallback = 规则解析失败才调用 / always = 每条都用 Claude
+  model: claude-opus-5

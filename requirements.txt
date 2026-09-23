@@ -1,0 +1,5 @@
+telethon>=1.36
+ccxt>=4.5.20
+python-dotenv>=1.0
+PyYAML>=6.0
+anthropic>=1.8
