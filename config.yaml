@@ -41,7 +41,6 @@ risk:
   liq_safety: 0.7              # 止损距离最多是强平距离的 70%（已计入 Bitget 维持保证金率和手续费），保证先止损
   max_margin_pct: 25           # 单笔保证金最多占权益 25%
   max_open_positions: 3        # 同时最多 3 单（持仓 + 挂单，实盘/模拟分开算）
-  daily_loss_limit_pct: 5      # 实盘当日亏损达到 5% 自动暂停开新仓
   daily_max_losses: 3          # 实盘当日亏损 3 单自动暂停开新仓，第二天自动恢复（0 = 不限制）
   # ---- 信号没给止损时怎么办（程序永远不会不带止损下单）----
   fallback_sl_mode: atr        # atr = 按这个币的波动率补止损（推荐）/ pct = 固定百分比 / off = 不跟

@@ -19,7 +19,6 @@ DEFAULT_RISK = {
     "liq_safety": 0.7,                # 止损距离 ≤ 强平距离 × 0.7（已计入维持保证金率和手续费）
     "max_margin_pct": 25.0,           # 单笔保证金最多占权益 %
     "max_open_positions": 3,          # 同时最多几单（持仓+挂单）
-    "daily_loss_limit_pct": 5.0,      # 当日亏损达到 % 后暂停实盘开新仓
     "daily_max_losses": 3,            # 当日实盘亏损单数达到此值后暂停实盘开新仓（0 = 不限制）
     "fallback_sl_mode": "atr",        # 信号没给止损时：atr 按波动率补 / pct 固定百分比 / off 不跟
     "fallback_sl_atr_mult": 2.0,      # atr 模式：止损距离 = 1 小时 ATR(14) × 此倍数

@@ -859,12 +859,6 @@ class Engine:
         if r and not self.paused():
             self.set_paused(r)
             await self.notify(f"⛔ {r}，已暂停实盘开新仓（已有持仓照常管理），明天自动恢复，/resume 可手动恢复")
-            return
-        start = float(rec.get("equity") or 0)
-        limit = float(self.cfg.risk["daily_loss_limit_pct"])
-        if start > 0 and not self.paused() and (start - eq) / start * 100 >= limit:
-            self.set_paused(f"当日亏损 {(start - eq) / start * 100:.1f}% 达到上限 {limit:g}%")
-            await self.notify(f"⛔ 今日实盘权益 {start:.2f}U → {eq:.2f}U，已暂停开新仓（已有持仓照常管理），明天自动恢复，/resume 可手动恢复")
 
     # ---------------- 命令 ----------------
     async def handle_command(self, text: str) -> str:
